@@ -1,0 +1,28 @@
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Database (local SQLite)
+*.db
+*.db-shm
+*.db-wal
+
+# Uploaded media (local storage)
+uploads/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
