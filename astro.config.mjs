@@ -3,6 +3,7 @@ import react from "@astrojs/react";
 import { defineConfig } from "astro/config";
 import emdash, { local } from "emdash/astro";
 import { sqlite } from "emdash/db";
+import path from "node:path";
 
 export default defineConfig({
 	output: "server",
@@ -20,4 +21,12 @@ export default defineConfig({
 		}),
 	],
 	devToolbar: { enabled: false },
+	vite: {
+		server: {
+			fs: {
+				// Allow Vite to serve files from the monorepo root (sibling directory)
+				allow: [path.resolve("../emdash")],
+			},
+		},
+	},
 });
