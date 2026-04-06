@@ -104,13 +104,46 @@ const isLoggedIn = !!Astro.locals.user;
 				<div class="collapse navbar-collapse" id="mainNav">
 					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 						{
-							menu?.items.map((item) => (
-								<li class="nav-item">
-									<a class="nav-link" href={item.url} target={item.target}>
-										{item.label}
-									</a>
-								</li>
-							))
+							menu?.items.map((item) =>
+								item.children && item.children.length > 0 ? (
+									<li class="nav-item dropdown">
+										<a
+											class="nav-link dropdown-toggle"
+											href={item.url}
+											role="button"
+											data-bs-toggle="dropdown"
+											aria-expanded="false"
+										>
+											{item.label}
+										</a>
+										<ul class="dropdown-menu">
+											{item.children.map((child) => (
+												<li>
+													<a
+														class="dropdown-item"
+														href={child.url}
+														target={child.target}
+														rel={child.target === "_blank" ? "noopener noreferrer" : undefined}
+													>
+														{child.label}
+													</a>
+												</li>
+											))}
+										</ul>
+									</li>
+								) : (
+									<li class="nav-item">
+										<a
+											class="nav-link"
+											href={item.url}
+											target={item.target}
+											rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+										>
+											{item.label}
+										</a>
+									</li>
+								)
+							)
 						}
 					</ul>
 
