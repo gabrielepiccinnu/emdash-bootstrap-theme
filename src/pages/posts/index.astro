@@ -1,0 +1,114 @@
+---
+import { getEmDashCollection, getEntryTerms } from "emdash";
+import Base from "../../layouts/Base.astro";
+import { getReadingTime } from "../../utils/reading-time";
+
+const { entries: posts, cacheHint } = await getEmDashCollection("posts");
+
+Astro.cache.set(cacheHint);
+
+const sortedPosts = posts.toSorted((a, b) => {
+	const dateA = a.data.publishedAt?.getTime() ?? 0;
+	const dateB = b.data.publishedAt?.getTime() ?? 0;
+	return dateB - dateA;
+});
+
+const postsWithTags = await Promise.all(
+	sortedPosts.map(async (post) => {
+		const tags = await getEntryTerms("posts", post.data.id, "tag");
+		return { post, tags, bylines: post.data.bylines ?? [] };
+	})
+);
+
+const formatDate = (date: Date) =>
+	date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+---
+
+<Base title="All Posts" description="Browse all blog posts">
+	<div class="container py-5">
+		<header class="mb-5">
+			<h1 class="fw-bold mb-1">All Posts</h1>
+			<p class="text-secondary">
+				{posts.length}
+				{posts.length === 1 ? "article" : "articles"}
+			</p>
+		</header>
+
+		{
+			sortedPosts.length === 0 ? (
+				<p class="text-secondary">No posts yet.</p>
+			) : (
+				<div class="list-group list-group-flush">
+					{postsWithTags.map(({ post, tags, bylines }) => (
+						<article class="list-group-item list-group-item-action px-0 py-4 border-start-0 border-end-0">
+							<a href={`/posts/${post.id}`} class="text-decoration-none stretched-link">
+								<p class="small text-secondary mb-1 d-flex align-items-center flex-wrap gap-1">
+									{bylines.length > 0 && (
+										<>
+											<span class="d-inline-flex align-items-center gap-1">
+												{bylines.slice(0, 2).map((credit, i) => (
+													<>
+														{i > 0 && <span>,</span>}
+														{credit.byline.avatarMediaId && (
+															<img
+																src={`/_emdash/api/media/file/${credit.byline.avatarMediaId}`}
+																alt={credit.byline.displayName}
+																width="18"
+																height="18"
+																class="rounded-circle object-fit-cover"
+															/>
+														)}
+														<span class="fw-medium">{credit.byline.displayName}</span>
+													</>
+												))}
+											</span>
+											<span aria-hidden="true">&middot;</span>
+										</>
+									)}
+									{post.data.publishedAt && <time>{formatDate(post.data.publishedAt)}</time>}
+									{post.data.publishedAt && <span aria-hidden="true">&middot;</span>}
+									<span>{getReadingTime(post.data.content)} min read</span>
+								</p>
+
+								<h2 class="h5 fw-semibold mb-1 post-title">
+									{post.data.title}
+								</h2>
+
+								{post.data.excerpt && (
+									<p class="text-secondary mb-0 small post-excerpt">{post.data.excerpt}</p>
+								)}
+							</a>
+
+							{tags.length > 0 && (
+								<div class="d-flex flex-wrap gap-2 mt-2" style="position: relative; z-index: 1;">
+									{tags.slice(0, 3).map((t) => (
+										<a href={`/tag/${t.slug}`} class="badge text-bg-secondary text-decoration-none fw-normal">
+											{t.label}
+										</a>
+									))}
+								</div>
+							)}
+						</article>
+					))}
+				</div>
+			)
+		}
+	</div>
+</Base>
+
+<style>
+	.post-title {
+		transition: color 0.15s ease;
+	}
+
+	article:hover .post-title {
+		color: var(--bs-primary);
+	}
+
+	.post-excerpt {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+</style>

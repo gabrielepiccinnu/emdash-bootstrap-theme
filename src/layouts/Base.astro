@@ -1,0 +1,376 @@
+---
+import { getMenu, getEmDashCollection } from "emdash";
+import {
+	WidgetArea,
+	EmDashHead,
+	EmDashBodyStart,
+	EmDashBodyEnd,
+} from "emdash/ui";
+import { createPublicPageContext } from "emdash/page";
+import LiveSearch from "emdash/ui/search";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/theme.css";
+
+interface Props {
+	title: string;
+	description?: string | null;
+	image?: string | null;
+	canonical?: string | null;
+	robots?: string | null;
+	type?: "website" | "article";
+	publishedTime?: string | null;
+	modifiedTime?: string | null;
+	author?: string | null;
+	/** Pass content reference for plugin page contributions on content pages */
+	content?: { collection: string; id: string; slug?: string | null };
+}
+
+const {
+	title,
+	description,
+	image,
+	canonical,
+	robots,
+	type = "website",
+	publishedTime,
+	modifiedTime,
+	author,
+	content,
+} = Astro.props;
+
+const siteTitle = "Bootstrap Blog";
+const fullTitle = title.includes(siteTitle) ? title : `${title} — ${siteTitle}`;
+
+const menu = await getMenu("primary");
+const { entries: pages } = await getEmDashCollection("pages");
+
+const pageCtx = createPublicPageContext({
+	Astro,
+	kind: content ? "content" : "custom",
+	pageType: type,
+	title: fullTitle,
+	description,
+	canonical,
+	image,
+	content,
+	seo: { ogImage: image, robots },
+	articleMeta: { publishedTime, modifiedTime, author },
+	siteName: siteTitle,
+});
+
+const isLoggedIn = !!Astro.locals.user;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{fullTitle}</title>
+		<EmDashHead page={pageCtx} />
+		<!-- Apply Bootstrap color mode before paint to avoid flash -->
+		<script is:inline>
+			(function () {
+				var match = document.cookie.match(/theme=([^;]+)/);
+				var theme = match ? match[1] : "auto";
+				if (theme === "dark" || theme === "light") {
+					document.documentElement.setAttribute("data-bs-theme", theme);
+				} else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+					document.documentElement.setAttribute("data-bs-theme", "dark");
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<EmDashBodyStart page={pageCtx} />
+
+		<!-- Navbar -->
+		<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom sticky-top">
+			<div class="container">
+				<a class="navbar-brand fw-semibold" href="/">{siteTitle}</a>
+
+				<button
+					class="navbar-toggler border-0"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#mainNav"
+					aria-controls="mainNav"
+					aria-expanded="false"
+					aria-label="Toggle navigation"
+				>
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="mainNav">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						{
+							menu?.items.map((item) => (
+								<li class="nav-item">
+									<a class="nav-link" href={item.url} target={item.target}>
+										{item.label}
+									</a>
+								</li>
+							))
+						}
+					</ul>
+
+					<div class="d-flex align-items-center gap-2">
+						<!-- Live Search -->
+						<div class="emdash-search-wrapper">
+							<LiveSearch
+								placeholder="Search…"
+								class="emdash-search-results"
+								inputClass="form-control form-control-sm"
+								resultsClass="emdash-search-results"
+								resultClass="emdash-search-result"
+								collections={["posts", "pages"]}
+							/>
+						</div>
+
+						<!-- Theme switcher -->
+						<div
+							class="btn-group btn-group-sm"
+							role="group"
+							aria-label="Theme"
+							id="theme-switcher"
+						>
+							<button
+								type="button"
+								class="btn btn-outline-secondary theme-btn"
+								data-theme="light"
+								title="Light mode"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="14"
+									height="14"
+									fill="currentColor"
+									viewBox="0 0 16 16"
+								>
+									<path
+										d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6m0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"
+									></path>
+								</svg>
+							</button>
+							<button
+								type="button"
+								class="btn btn-outline-secondary theme-btn"
+								data-theme="dark"
+								title="Dark mode"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="14"
+									height="14"
+									fill="currentColor"
+									viewBox="0 0 16 16"
+								>
+									<path
+										d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278"
+									></path>
+								</svg>
+							</button>
+							<button
+								type="button"
+								class="btn btn-outline-secondary theme-btn"
+								data-theme="auto"
+								title="Auto (system)"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="14"
+									height="14"
+									fill="currentColor"
+									viewBox="0 0 16 16"
+								>
+									<path
+										d="M8 13.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11m0 1.5a7 7 0 1 1 0-14A7 7 0 0 1 8 15M8 3a5 5 0 0 1 0 10V3z"
+									></path>
+								</svg>
+							</button>
+						</div>
+
+						{
+							isLoggedIn && (
+								<a href="/_emdash/admin" class="btn btn-sm btn-outline-secondary">
+									Admin
+								</a>
+							)
+						}
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<main>
+			<slot />
+		</main>
+
+		<!-- Footer -->
+		<footer class="bg-body-tertiary border-top mt-5 py-5">
+			<div class="container">
+				<div class="row g-4">
+					<div class="col-lg-4">
+						<a href="/" class="text-decoration-none">
+							<span class="h5 fw-semibold text-body">{siteTitle}</span>
+						</a>
+						<p class="text-secondary small mt-2 mb-0">
+							Built with <a href="https://emdashcms.com" class="text-secondary"
+								>EmDash</a
+							> and Bootstrap 5.
+						</p>
+					</div>
+
+					<div class="col-6 col-lg-2">
+						<h6
+							class="text-uppercase text-secondary fw-semibold"
+							style="font-size: 0.75rem; letter-spacing: 0.07em;"
+						>
+							Navigate
+						</h6>
+						<ul class="list-unstyled small">
+							<li class="mb-1"><a href="/" class="text-secondary text-decoration-none">Home</a></li>
+							<li class="mb-1">
+								<a href="/posts" class="text-secondary text-decoration-none">All Posts</a>
+							</li>
+							{
+								pages.slice(0, 3).map((page) => (
+									<li class="mb-1">
+										<a
+											href={`/pages/${page.data.slug || page.id}`}
+											class="text-secondary text-decoration-none"
+										>
+											{page.data.title}
+										</a>
+									</li>
+								))
+							}
+						</ul>
+					</div>
+
+					<div class="col-6 col-lg-2">
+						<h6
+							class="text-uppercase text-secondary fw-semibold"
+							style="font-size: 0.75rem; letter-spacing: 0.07em;"
+						>
+							More
+						</h6>
+						<ul class="list-unstyled small">
+							{
+								menu?.items.map((item) => (
+									<li class="mb-1">
+										<a
+											href={item.url}
+											target={item.target}
+											rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+											class="text-secondary text-decoration-none"
+										>
+											{item.label}
+										</a>
+									</li>
+								))
+							}
+							<li class="mb-1">
+								<a href="/rss.xml" class="text-secondary text-decoration-none">RSS Feed</a>
+							</li>
+						</ul>
+					</div>
+
+					<div class="col-lg-4">
+						<WidgetArea name="footer" />
+					</div>
+				</div>
+
+				<hr class="my-4" />
+
+				<div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+					<p class="text-secondary small mb-0">
+						Powered by <a href="https://emdashcms.com" class="text-secondary">EmDash</a>
+					</p>
+					<p class="text-secondary small mb-0">
+						<a href="/rss.xml" class="text-secondary text-decoration-none">RSS</a>
+						&middot;
+						<a href="/search" class="text-secondary text-decoration-none">Search</a>
+					</p>
+				</div>
+			</div>
+		</footer>
+
+		<!-- Bootstrap JS bundle (Popper + all plugins) -->
+		<script>
+			import "bootstrap/dist/js/bootstrap.bundle.min.js";
+		</script>
+
+		<!-- Theme switcher logic -->
+		<script>
+			const THEME_COOKIE = "theme";
+			const ROOT = document.documentElement;
+
+			function getCookieTheme(): string {
+				const match = document.cookie.match(/theme=([^;]+)/);
+				return match ? match[1] : "auto";
+			}
+
+			function setCookie(value: string) {
+				const secure = location.protocol === "https:" ? "; Secure" : "";
+				if (!value || value === "auto") {
+					document.cookie = `${THEME_COOKIE}=; path=/; max-age=0; SameSite=Lax${secure}`;
+				} else {
+					document.cookie = `${THEME_COOKIE}=${value}; path=/; max-age=31536000; SameSite=Lax${secure}`;
+				}
+			}
+
+			function applyTheme(theme: string) {
+				if (theme === "dark" || theme === "light") {
+					ROOT.setAttribute("data-bs-theme", theme);
+				} else {
+					// auto: follow system preference
+					const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+					ROOT.setAttribute("data-bs-theme", prefersDark ? "dark" : "light");
+				}
+			}
+
+			function updateButtons(active: string) {
+				document.querySelectorAll<HTMLButtonElement>(".theme-btn").forEach((btn) => {
+					const isActive = btn.dataset.theme === active;
+					btn.classList.toggle("active", isActive);
+					btn.classList.toggle("btn-secondary", isActive);
+					btn.classList.toggle("btn-outline-secondary", !isActive);
+				});
+			}
+
+			// Init
+			const stored = getCookieTheme();
+			applyTheme(stored);
+			updateButtons(stored);
+
+			// Button clicks
+			document.querySelectorAll<HTMLButtonElement>(".theme-btn").forEach((btn) => {
+				btn.addEventListener("click", () => {
+					const theme = btn.dataset.theme ?? "auto";
+					setCookie(theme === "auto" ? "" : theme);
+					applyTheme(theme);
+					updateButtons(theme);
+				});
+			});
+
+			// Track system preference changes when in auto mode
+			window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+				if (getCookieTheme() === "auto") {
+					ROOT.setAttribute("data-bs-theme", e.matches ? "dark" : "light");
+				}
+			});
+
+			// ⌘K / Ctrl+K to focus search
+			document.addEventListener("keydown", (e) => {
+				if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+					e.preventDefault();
+					const input = document.querySelector<HTMLInputElement>(".emdash-search-wrapper input");
+					input?.focus();
+				}
+			});
+		</script>
+
+		<EmDashBodyEnd page={pageCtx} />
+	</body>
+</html>

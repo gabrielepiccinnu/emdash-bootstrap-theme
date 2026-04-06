@@ -1,0 +1,210 @@
+---
+import { getEmDashCollection, getEntryTerms } from "emdash";
+import { Image } from "emdash/ui";
+import Base from "../layouts/Base.astro";
+import PostCard from "../components/PostCard.astro";
+import { getReadingTime } from "../utils/reading-time";
+
+const { entries: posts, cacheHint } = await getEmDashCollection("posts");
+
+Astro.cache.set(cacheHint);
+
+const sortedPosts = posts.toSorted((a, b) => {
+	const dateA = a.data.publishedAt?.getTime() ?? 0;
+	const dateB = b.data.publishedAt?.getTime() ?? 0;
+	return dateB - dateA;
+});
+
+// First post with an image becomes the hero
+const featuredPost = sortedPosts.find((p) => p.data.featured_image);
+const featuredIndex = featuredPost ? sortedPosts.indexOf(featuredPost) : -1;
+const gridPosts = sortedPosts.filter((_, i) => i !== featuredIndex).slice(0, 6);
+const hasMorePosts = sortedPosts.length > (featuredPost ? 1 : 0) + gridPosts.length;
+
+const featuredBylines = featuredPost?.data.bylines ?? [];
+let featuredTags: Array<{ slug: string; label: string }> = [];
+if (featuredPost) {
+	const tags = await getEntryTerms("posts", featuredPost.data.id, "tag");
+	featuredTags = tags.map((t) => ({ slug: t.slug, label: t.label }));
+}
+
+const gridPostsWithTags = await Promise.all(
+	gridPosts.map(async (post) => {
+		const tags = await getEntryTerms("posts", post.data.id, "tag");
+		return { post, tags: tags.map((t) => ({ slug: t.slug, label: t.label })), bylines: post.data.bylines ?? [] };
+	})
+);
+
+function formatDate(date: Date | null | undefined) {
+	if (!date) return null;
+	return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+}
+---
+
+<Base title="Home" description="Welcome to Bootstrap Blog">
+	{
+		posts.length === 0 ? (
+			<div class="container py-5 text-center">
+				<div class="py-5">
+					<h2 class="mb-3">No posts yet</h2>
+					<p class="text-secondary mb-4">Create your first post in the admin panel.</p>
+					<a href="/_emdash/admin/content/posts/new" class="btn btn-primary">
+						Create a post
+					</a>
+				</div>
+			</div>
+		) : (
+			<>
+				{/* ── Hero: Featured Post ── */}
+				{featuredPost && (
+					<section class="bg-body-secondary border-bottom py-0">
+						<div class="container-fluid px-0">
+							<div class="row g-0 align-items-stretch" style="min-height: 420px;">
+								{/* Image: left 60% */}
+								<div class="col-lg-7 overflow-hidden position-relative hero-img-col">
+									<a href={`/posts/${featuredPost.id}`} class="d-block h-100" tabindex="-1" aria-hidden="true">
+										<Image
+											image={featuredPost.data.featured_image}
+											class="w-100 h-100 object-fit-cover hero-featured-img"
+										/>
+									</a>
+								</div>
+
+								{/* Content: right 40% */}
+								<div class="col-lg-5 d-flex align-items-center">
+									<div class="p-4 p-lg-5">
+										{/* Bylines + date + reading time */}
+										<p class="small text-secondary mb-2 d-flex align-items-center flex-wrap gap-1">
+											{featuredBylines.length > 0 && (
+												<>
+													<span class="d-inline-flex align-items-center gap-1">
+														{featuredBylines.slice(0, 2).map((credit, i) => (
+															<>
+																{i > 0 && <span class="text-secondary">,</span>}
+																{credit.byline.avatarMediaId && (
+																	<img
+																		src={`/_emdash/api/media/file/${credit.byline.avatarMediaId}`}
+																		alt={credit.byline.displayName}
+																		width="20"
+																		height="20"
+																		class="rounded-circle object-fit-cover"
+																	/>
+																)}
+																<span class="fw-medium text-body-secondary">
+																	{credit.byline.displayName}
+																</span>
+															</>
+														))}
+													</span>
+													<span aria-hidden="true">&middot;</span>
+												</>
+											)}
+											{formatDate(featuredPost.data.publishedAt) && (
+												<time>{formatDate(featuredPost.data.publishedAt)}</time>
+											)}
+											{featuredPost.data.publishedAt && (
+												<>
+													<span aria-hidden="true">&middot;</span>
+													<span>{getReadingTime(featuredPost.data.content)} min read</span>
+												</>
+											)}
+										</p>
+
+										<a href={`/posts/${featuredPost.id}`} class="text-decoration-none text-body">
+											<h1 class="h2 fw-bold lh-sm mb-3 hero-title">
+												{featuredPost.data.title}
+											</h1>
+										</a>
+
+										{featuredPost.data.excerpt && (
+											<p class="text-secondary mb-3 hero-excerpt">{featuredPost.data.excerpt}</p>
+										)}
+
+										{featuredTags.length > 0 && (
+											<div class="d-flex flex-wrap gap-2 mb-3">
+												{featuredTags.map((tag) => (
+													<a href={`/tag/${tag.slug}`} class="badge text-bg-primary text-decoration-none fw-normal">
+														{tag.label}
+													</a>
+												))}
+											</div>
+										)}
+
+										<a href={`/posts/${featuredPost.id}`} class="btn btn-primary btn-sm">
+											Read post
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+				)}
+
+				{/* ── Latest Posts grid ── */}
+				{gridPostsWithTags.length > 0 && (
+					<section class="container py-5">
+						<div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+							<h2 class="h6 text-uppercase text-secondary fw-semibold mb-0"
+								style="letter-spacing: 0.07em;">
+								Latest
+							</h2>
+							{hasMorePosts && (
+								<a href="/posts" class="btn btn-sm btn-outline-secondary">
+									View all
+								</a>
+							)}
+						</div>
+
+						<div class="row g-4">
+							{gridPostsWithTags.map(({ post, tags, bylines }) => (
+								<div class="col-sm-6 col-lg-4">
+									<PostCard
+										title={post.data.title ?? "Untitled"}
+										excerpt={post.data.excerpt}
+										featuredImage={post.data.featured_image}
+										href={`/posts/${post.id}`}
+										date={post.data.publishedAt ?? undefined}
+										readingTime={getReadingTime(post.data.content)}
+										tags={tags}
+										bylines={bylines}
+									/>
+								</div>
+							))}
+						</div>
+					</section>
+				)}
+			</>
+		)
+	}
+</Base>
+
+<style>
+	.hero-featured-img {
+		transition: transform 0.4s ease;
+	}
+
+	.hero-img-col:hover .hero-featured-img {
+		transform: scale(1.02);
+	}
+
+	.hero-title {
+		transition: color 0.15s ease;
+	}
+
+	a:hover .hero-title {
+		color: var(--bs-primary) !important;
+	}
+
+	.hero-excerpt {
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	@media (max-width: 991.98px) {
+		.hero-img-col {
+			min-height: 260px;
+		}
+	}
+</style>

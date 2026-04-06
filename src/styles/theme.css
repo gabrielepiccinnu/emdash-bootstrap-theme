@@ -1,0 +1,339 @@
+/**
+ * Bootstrap 5 theme overrides for EmDash Bootstrap Starter.
+ *
+ * Bootstrap exposes its design tokens as CSS custom properties.
+ * Override them here to customize the theme without SCSS.
+ *
+ * Full reference: https://getbootstrap.com/docs/5.3/customize/css-variables/
+ */
+
+:root {
+	/* Primary color — change this to rebrand the whole theme */
+	/* --bs-primary: #0d6efd; */
+	/* --bs-primary-rgb: 13, 110, 253; */
+
+	/* Body font — Bootstrap defaults to system-ui */
+	/* --bs-body-font-family: 'Inter', system-ui, sans-serif; */
+
+	/* Border radius — Bootstrap default is 0.375rem */
+	/* --bs-border-radius: 0.375rem; */
+	/* --bs-border-radius-lg: 0.5rem; */
+
+	/* Card tweaks */
+	--bs-card-border-color: rgba(0, 0, 0, 0.09);
+	--bs-card-cap-bg: transparent;
+}
+
+/* -------------------------------------------------------
+   Article / Portable Text content typography
+   Bootstrap doesn't style arbitrary HTML content inside
+   .article-content, so we add sensible prose styles here.
+------------------------------------------------------- */
+.article-content p {
+	margin-bottom: 1.4em;
+	line-height: 1.75;
+}
+
+.article-content h2 {
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin-top: 2.5em;
+	margin-bottom: 0.75em;
+	scroll-margin-top: 80px;
+}
+
+.article-content h3 {
+	font-size: 1.25rem;
+	font-weight: 600;
+	margin-top: 2em;
+	margin-bottom: 0.5em;
+	scroll-margin-top: 80px;
+}
+
+.article-content blockquote {
+	margin: 1.75em 0;
+	padding: 1rem 1.5rem;
+	border-left: 4px solid var(--bs-primary);
+	background-color: var(--bs-tertiary-bg);
+	border-radius: 0 var(--bs-border-radius) var(--bs-border-radius) 0;
+	font-style: italic;
+	color: var(--bs-secondary-color);
+}
+
+.article-content pre {
+	margin: 1.75em 0;
+	padding: 1.25rem;
+	background-color: var(--bs-tertiary-bg);
+	border: 1px solid var(--bs-border-color);
+	border-radius: var(--bs-border-radius-lg);
+	overflow-x: auto;
+	font-size: 0.875rem;
+	line-height: 1.6;
+}
+
+.article-content code {
+	font-size: 0.9em;
+	background-color: var(--bs-tertiary-bg);
+	padding: 0.2em 0.4em;
+	border-radius: var(--bs-border-radius-sm);
+}
+
+.article-content pre code {
+	background: none;
+	padding: 0;
+	font-size: inherit;
+}
+
+.article-content ul,
+.article-content ol {
+	margin-bottom: 1.4em;
+	padding-left: 1.75em;
+}
+
+.article-content li {
+	margin-bottom: 0.4em;
+	line-height: 1.7;
+}
+
+.article-content img {
+	margin: 2em 0;
+	border-radius: var(--bs-border-radius-lg);
+	max-width: 100%;
+	height: auto;
+}
+
+.article-content hr {
+	margin: 2.5em 0;
+}
+
+.article-content a {
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* -------------------------------------------------------
+   EmDash search widget — Bootstrap-styled
+------------------------------------------------------- */
+.emdash-search-wrapper {
+	position: relative;
+}
+
+:global(.emdash-search-results) {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	right: 0;
+	z-index: 1060;
+	background: var(--bs-body-bg);
+	border: 1px solid var(--bs-border-color);
+	border-radius: var(--bs-border-radius-lg);
+	box-shadow: var(--bs-box-shadow);
+	max-height: 380px;
+	overflow-y: auto;
+}
+
+:global(.emdash-search-result) {
+	display: block;
+	padding: 0.6rem 1rem;
+	text-decoration: none;
+	color: var(--bs-body-color);
+	border-bottom: 1px solid var(--bs-border-color-translucent);
+	transition: background-color 0.12s ease;
+}
+
+:global(.emdash-search-result:last-child) {
+	border-bottom: none;
+}
+
+:global(.emdash-search-result:hover),
+:global(.emdash-search-result.focused) {
+	background-color: var(--bs-tertiary-bg);
+	color: var(--bs-body-color);
+}
+
+:global(.emdash-live-search-result-title) {
+	display: block;
+	font-weight: 500;
+	font-size: 0.875rem;
+}
+
+:global(.emdash-live-search-result-collection) {
+	display: block;
+	font-size: 0.75rem;
+	color: var(--bs-secondary-color);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-top: 1px;
+}
+
+:global(.emdash-live-search-result-snippet) {
+	display: block;
+	font-size: 0.8125rem;
+	color: var(--bs-secondary-color);
+	margin-top: 2px;
+	line-height: 1.4;
+}
+
+:global(.emdash-live-search-result-snippet mark) {
+	font-weight: 600;
+	background: none;
+	color: var(--bs-body-color);
+	padding: 0;
+}
+
+:global(.emdash-live-search-loading),
+:global(.emdash-live-search-no-results) {
+	padding: 0.75rem 1rem;
+	font-size: 0.875rem;
+	color: var(--bs-secondary-color);
+	text-align: center;
+}
+
+/* -------------------------------------------------------
+   TOC (Table of Contents)
+------------------------------------------------------- */
+.toc-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.toc-item {
+	margin-bottom: 0.25rem;
+}
+
+.toc-item--nested {
+	padding-left: 1rem;
+}
+
+.toc-link {
+	display: block;
+	font-size: 0.8125rem;
+	color: var(--bs-secondary-color);
+	text-decoration: none;
+	padding: 0.2rem 0;
+	line-height: 1.4;
+	transition: color 0.12s ease;
+}
+
+.toc-link:hover,
+.toc-link.active {
+	color: var(--bs-body-color);
+}
+
+/* -------------------------------------------------------
+   Sidebar EmDash widget overrides
+------------------------------------------------------- */
+.sidebar-widgets :global(.widget__title) {
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	color: var(--bs-secondary-color);
+	margin-bottom: 0.75rem;
+}
+
+.sidebar-widgets :global(.widget-categories),
+.sidebar-widgets :global(.widget-recent-posts),
+.sidebar-widgets :global(.widget-archives) {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.sidebar-widgets :global(.widget-categories li),
+.sidebar-widgets :global(.widget-recent-posts li),
+.sidebar-widgets :global(.widget-archives li) {
+	padding: 0.35rem 0;
+	border-bottom: 1px solid var(--bs-border-color-translucent);
+	font-size: 0.875rem;
+}
+
+.sidebar-widgets :global(.widget-categories li:last-child),
+.sidebar-widgets :global(.widget-recent-posts li:last-child),
+.sidebar-widgets :global(.widget-archives li:last-child) {
+	border-bottom: none;
+}
+
+.sidebar-widgets :global(.widget-categories__link),
+.sidebar-widgets :global(.widget-recent-posts a),
+.sidebar-widgets :global(.widget-archives__link) {
+	color: var(--bs-body-color);
+	text-decoration: none;
+}
+
+.sidebar-widgets :global(.widget-categories__link:hover),
+.sidebar-widgets :global(.widget-recent-posts a:hover),
+.sidebar-widgets :global(.widget-archives__link:hover) {
+	color: var(--bs-primary);
+}
+
+.sidebar-widgets :global(.widget-categories__count),
+.sidebar-widgets :global(.widget-archives__count) {
+	float: right;
+	font-size: 0.75rem;
+	color: var(--bs-secondary-color);
+	background: var(--bs-tertiary-bg);
+	padding: 0.1em 0.5em;
+	border-radius: var(--bs-border-radius-pill);
+}
+
+.sidebar-widgets :global(.widget-tags__cloud) {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.375rem;
+}
+
+.sidebar-widgets :global(.widget-tags__link) {
+	display: inline-block;
+	padding: 0.2rem 0.6rem;
+	font-size: 0.8rem;
+	color: var(--bs-secondary-color);
+	background: var(--bs-tertiary-bg);
+	border-radius: var(--bs-border-radius-pill);
+	text-decoration: none;
+	transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.sidebar-widgets :global(.widget-tags__link:hover) {
+	background: var(--bs-primary);
+	color: #fff;
+}
+
+.sidebar-widgets :global(.widget-tags__count) {
+	display: none;
+}
+
+/* -------------------------------------------------------
+   Post card image sizing
+------------------------------------------------------- */
+.post-card-img {
+	aspect-ratio: 16 / 10;
+	object-fit: cover;
+	width: 100%;
+}
+
+/* -------------------------------------------------------
+   Comments section — Bootstrap-flavored
+------------------------------------------------------- */
+.comments-section :global(.ec-comments-heading) {
+	font-size: 1.25rem;
+	font-weight: 600;
+	margin-bottom: 1.5rem;
+}
+
+.comments-section :global(.ec-comment-form-field input),
+.comments-section :global(.ec-comment-form-field textarea) {
+	border-color: var(--bs-border-color) !important;
+	background-color: var(--bs-body-bg) !important;
+	color: var(--bs-body-color) !important;
+}
+
+.comments-section :global(.ec-comment-form-submit) {
+	background-color: var(--bs-primary) !important;
+	border-color: var(--bs-primary) !important;
+	color: #fff !important;
+}

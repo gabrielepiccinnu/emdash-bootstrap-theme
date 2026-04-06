@@ -1,0 +1,669 @@
+{
+	"$schema": "https://emdashcms.com/seed.schema.json",
+	"version": "1",
+	"meta": {
+		"name": "Bootstrap 5 Starter",
+		"description": "A blog built with Bootstrap 5 and EmDash CMS",
+		"author": "EmDash"
+	},
+
+	"settings": {
+		"title": "Bootstrap Blog",
+		"tagline": "Built with EmDash CMS and Bootstrap 5"
+	},
+
+	"collections": [
+		{
+			"slug": "posts",
+			"label": "Posts",
+			"labelSingular": "Post",
+			"supports": ["drafts", "revisions", "search", "seo"],
+			"commentsEnabled": true,
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "featured_image",
+					"label": "Featured Image",
+					"type": "image"
+				},
+				{
+					"slug": "content",
+					"label": "Content",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "excerpt",
+					"label": "Excerpt",
+					"type": "text"
+				}
+			]
+		},
+		{
+			"slug": "pages",
+			"label": "Pages",
+			"labelSingular": "Page",
+			"supports": ["drafts", "revisions", "search"],
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "content",
+					"label": "Content",
+					"type": "portableText",
+					"searchable": true
+				}
+			]
+		}
+	],
+
+	"taxonomies": [
+		{
+			"name": "category",
+			"label": "Categories",
+			"labelSingular": "Category",
+			"hierarchical": true,
+			"collections": ["posts"],
+			"terms": [
+				{ "slug": "development", "label": "Development" },
+				{ "slug": "design", "label": "Design" },
+				{ "slug": "tutorials", "label": "Tutorials" }
+			]
+		},
+		{
+			"name": "tag",
+			"label": "Tags",
+			"labelSingular": "Tag",
+			"hierarchical": false,
+			"collections": ["posts"],
+			"terms": [
+				{ "slug": "bootstrap", "label": "Bootstrap" },
+				{ "slug": "css", "label": "CSS" },
+				{ "slug": "javascript", "label": "JavaScript" },
+				{ "slug": "astro", "label": "Astro" },
+				{ "slug": "tips", "label": "Tips" }
+			]
+		}
+	],
+
+	"bylines": [
+		{
+			"id": "byline-editorial",
+			"slug": "editorial",
+			"displayName": "Editorial Team"
+		},
+		{
+			"id": "byline-guest",
+			"slug": "guest-contributor",
+			"displayName": "Guest Contributor",
+			"isGuest": true
+		}
+	],
+
+	"menus": [
+		{
+			"name": "primary",
+			"label": "Primary Navigation",
+			"items": [
+				{ "type": "custom", "label": "Home", "url": "/" },
+				{ "type": "custom", "label": "Posts", "url": "/posts" },
+				{ "type": "custom", "label": "About", "url": "/pages/about" }
+			]
+		}
+	],
+
+	"widgetAreas": [
+		{
+			"name": "sidebar",
+			"label": "Sidebar",
+			"description": "Widget area displayed on single post pages",
+			"widgets": [
+				{
+					"type": "component",
+					"componentId": "core:search",
+					"title": "Search"
+				},
+				{
+					"type": "component",
+					"componentId": "core:categories",
+					"title": "Categories"
+				},
+				{
+					"type": "component",
+					"componentId": "core:tags",
+					"title": "Tags"
+				},
+				{
+					"type": "component",
+					"componentId": "core:recent-posts",
+					"title": "Recent Posts",
+					"settings": {
+						"count": 5,
+						"showDate": true
+					}
+				},
+				{
+					"type": "component",
+					"componentId": "core:archives",
+					"title": "Archives",
+					"settings": {
+						"type": "monthly",
+						"limit": 6
+					}
+				}
+			]
+		},
+		{
+			"name": "footer",
+			"label": "Footer",
+			"description": "Widget area displayed in the site footer",
+			"widgets": [
+				{
+					"type": "content",
+					"title": "About This Blog",
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "A modern blog built with EmDash CMS and Bootstrap 5. Fast, accessible, and easy to customize."
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+
+	"sections": [
+		{
+			"slug": "newsletter-signup",
+			"title": "Newsletter Signup",
+			"description": "Call-to-action block for newsletter subscriptions",
+			"keywords": ["newsletter", "subscribe", "email", "cta"],
+			"source": "theme",
+			"content": [
+				{
+					"_type": "block",
+					"style": "h3",
+					"children": [{ "_type": "span", "text": "Stay in the loop" }]
+				},
+				{
+					"_type": "block",
+					"style": "normal",
+					"children": [
+						{
+							"_type": "span",
+							"text": "Get notified when new posts are published. No spam, unsubscribe anytime."
+						}
+					]
+				}
+			]
+		}
+	],
+
+	"content": {
+		"pages": [
+			{
+				"id": "about",
+				"slug": "about",
+				"status": "published",
+				"data": {
+					"title": "About",
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "This is a Bootstrap 5 starter theme for EmDash CMS. It demonstrates how to build a modern, responsive blog using Bootstrap components with EmDash's content management features."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "The theme includes posts, pages, categories, tags, search, RSS, and comments — all powered by EmDash's database-driven CMS and rendered with Astro's server-side rendering."
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"posts": [
+			{
+				"id": "post-1",
+				"slug": "getting-started-with-bootstrap-5",
+				"status": "published",
+				"data": {
+					"title": "Getting Started with Bootstrap 5",
+					"excerpt": "Bootstrap 5 brings a modernized grid, improved utilities, and a native dark mode. Here's what you need to know to get started.",
+					"featured_image": {
+						"$media": {
+							"url": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=800&fit=crop",
+							"alt": "Code on a monitor",
+							"filename": "getting-started-bootstrap.jpg"
+						}
+					},
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Bootstrap 5 dropped jQuery as a dependency, overhauled its documentation, and introduced a powerful utility API. If you're coming from Bootstrap 4, the migration is straightforward. If this is your first time, you're in for a pleasant experience."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Installation" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "The easiest way to add Bootstrap to your project is via npm. Install the package and import the CSS in your main layout. The JavaScript bundle includes Popper.js for dropdowns and tooltips."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "The Grid System" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Bootstrap's 12-column grid remains the most intuitive layout system in the framework ecosystem. Combined with the new gap utilities, building responsive layouts has never been cleaner. The new xxl breakpoint at 1400px is a welcome addition for wide-screen designs."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Dark Mode" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Bootstrap 5.3 introduced a native color mode system. Set data-bs-theme=\"dark\" on any element — including the root html tag — to switch all Bootstrap components to dark mode instantly. No custom CSS required."
+								}
+							]
+						}
+					]
+				},
+				"bylines": [{ "byline": "byline-editorial" }],
+				"taxonomies": {
+					"category": ["tutorials"],
+					"tag": ["bootstrap", "css"]
+				}
+			},
+			{
+				"id": "post-2",
+				"slug": "building-responsive-layouts-with-the-grid",
+				"status": "published",
+				"data": {
+					"title": "Building Responsive Layouts with the Bootstrap Grid",
+					"excerpt": "The Bootstrap grid is deceptively simple. Master it and you can build almost any layout without writing a single line of custom CSS.",
+					"featured_image": {
+						"$media": {
+							"url": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=800&fit=crop",
+							"alt": "Laptop on a wooden desk",
+							"filename": "bootstrap-grid.jpg"
+						}
+					},
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "The 12-column grid is Bootstrap's most recognizable feature, and for good reason. It maps perfectly to the most common layout patterns: halves, thirds, quarters, and thirds-and-two-thirds combinations."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Breakpoints" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Bootstrap defines six breakpoints: xs (default), sm (576px), md (768px), lg (992px), xl (1200px), and xxl (1400px). Each corresponds to a set of col-* classes. Build mobile-first by starting with the default (xs) column sizes and overriding for larger screens."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "The Gap Utility" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Bootstrap 5 replaced the gutter system with CSS gap utilities. Instead of negative margins and padding hacks, you now add g-3 or g-4 directly to the row element. It's clean, predictable, and works with flexbox and grid alike."
+								}
+							]
+						}
+					]
+				},
+				"bylines": [{ "byline": "byline-editorial" }],
+				"taxonomies": {
+					"category": ["tutorials"],
+					"tag": ["bootstrap", "css"]
+				}
+			},
+			{
+				"id": "post-3",
+				"slug": "bootstrap-utilities-that-replace-custom-css",
+				"status": "published",
+				"data": {
+					"title": "Bootstrap Utilities That Replace Custom CSS",
+					"excerpt": "Before reaching for your stylesheet, check Bootstrap's utility classes. Spacing, typography, colors, display — most common styles are already there.",
+					"featured_image": {
+						"$media": {
+							"url": "https://images.unsplash.com/photo-1432821596592-e2c18b78144f?w=1200&h=800&fit=crop",
+							"alt": "Notebook with pen",
+							"filename": "bootstrap-utilities.jpg"
+						}
+					},
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "One of the most underappreciated aspects of Bootstrap is its utility layer. The spacing utilities alone — m-*, p-*, gap-* — can handle the vast majority of layout adjustments without touching a stylesheet."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Spacing" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Bootstrap's spacing scale runs from 0 to 5, mapped to rem values (0, 0.25rem, 0.5rem, 1rem, 1.5rem, 3rem). Add directional modifiers (t, b, s, e, x, y) and you have fine-grained control over every margin and padding."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Display and Flexbox" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "d-flex, align-items-center, justify-content-between — these three classes together handle 80% of common alignment tasks. Combined with the responsive d-none d-md-flex pattern, you can show and hide elements cleanly across breakpoints."
+								}
+							]
+						}
+					]
+				},
+				"bylines": [{ "byline": "byline-editorial" }],
+				"taxonomies": {
+					"category": ["development"],
+					"tag": ["bootstrap", "css", "tips"]
+				}
+			},
+			{
+				"id": "post-4",
+				"slug": "astro-and-bootstrap-a-natural-pair",
+				"status": "published",
+				"data": {
+					"title": "Astro and Bootstrap: A Natural Pair",
+					"excerpt": "Astro's component-scoped styles and Bootstrap's utility-first approach complement each other surprisingly well.",
+					"featured_image": {
+						"$media": {
+							"url": "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&h=800&fit=crop",
+							"alt": "Code on a dark screen",
+							"filename": "astro-bootstrap.jpg"
+						}
+					},
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "At first glance, Astro and Bootstrap seem like an odd couple. Astro encourages scoped, component-level CSS. Bootstrap encourages applying utility classes directly in markup. But in practice, the two philosophies fit together cleanly."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Scoped Styles for Custom Components" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Use Astro's scoped <style> for anything unique to a component — article content typography, a custom hero layout, a specific animation. Use Bootstrap utilities for spacing, flexbox, display, and color. The result is less custom CSS with more predictable behavior."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "No jQuery, No Problem" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Bootstrap 5's vanilla JavaScript works seamlessly with Astro's `<script>` tags. Import the bundle with `import 'bootstrap/dist/js/bootstrap.bundle.min.js'` and all interactive components — modals, dropdowns, collapse — work out of the box."
+								}
+							]
+						}
+					]
+				},
+				"bylines": [{ "byline": "byline-editorial" }],
+				"taxonomies": {
+					"category": ["development"],
+					"tag": ["astro", "bootstrap", "javascript"]
+				}
+			},
+			{
+				"id": "post-5",
+				"slug": "customizing-bootstrap-with-css-variables",
+				"status": "published",
+				"data": {
+					"title": "Customizing Bootstrap with CSS Variables",
+					"excerpt": "SCSS is optional. Bootstrap 5 exposes CSS custom properties for all its tokens, so you can override the theme in plain CSS.",
+					"featured_image": {
+						"$media": {
+							"url": "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=1200&h=800&fit=crop",
+							"alt": "Pencils and design tools",
+							"filename": "css-variables.jpg"
+						}
+					},
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "The traditional way to customize Bootstrap was to override SCSS variables before compilation. Bootstrap 5 still supports this, but now exposes most of its design tokens as CSS custom properties. This means you can customize the theme in plain CSS — no build step required."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Color Tokens" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Override --bs-primary-rgb to change the primary color across buttons, badges, and links without touching a single component. The RGB format allows Bootstrap to apply opacity variants automatically."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Component-Level Tokens" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Every Bootstrap component exposes its own CSS variables: --bs-card-border-color, --bs-btn-border-radius, --bs-navbar-brand-font-size. Override these on :root or scope them to specific selectors for targeted customization."
+								}
+							]
+						}
+					]
+				},
+				"bylines": [{ "byline": "byline-editorial" }],
+				"taxonomies": {
+					"category": ["design"],
+					"tag": ["bootstrap", "css"]
+				}
+			},
+			{
+				"id": "post-6",
+				"slug": "bootstrap-icons-the-official-icon-library",
+				"status": "published",
+				"data": {
+					"title": "Bootstrap Icons: The Official Icon Library",
+					"excerpt": "Over 1800 SVG icons, designed to match Bootstrap's visual style. Use them inline, as an icon font, or with CSS sprites.",
+					"featured_image": {
+						"$media": {
+							"url": "https://images.unsplash.com/photo-1575026615908-666710ae5e47?w=1200&h=800&fit=crop",
+							"alt": "Hand tools on a wall",
+							"filename": "bootstrap-icons.jpg"
+						}
+					},
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Bootstrap Icons is the official icon set, released alongside Bootstrap 5. It's framework-agnostic — you can use it in any project — but it was designed to look at home alongside Bootstrap components."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Three Usage Methods" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Inline SVG gives you full color control and no extra HTTP requests. The icon font is convenient for rapid prototyping. The npm package exposes each icon as an individual file, which is ideal for bundlers that can tree-shake unused icons."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [{ "_type": "span", "text": "Sizing and Color" }]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Icons inherit `currentColor` by default, so they automatically match the surrounding text. Size them with width and height attributes (16px is the default) or with font-size when using the icon font. The bi-* class names are intuitive and consistent."
+								}
+							]
+						}
+					]
+				},
+				"bylines": [{ "byline": "byline-editorial" }],
+				"taxonomies": {
+					"category": ["design"],
+					"tag": ["bootstrap", "tips"]
+				}
+			},
+			{
+				"id": "post-draft",
+				"slug": "work-in-progress",
+				"status": "draft",
+				"data": {
+					"title": "Work in Progress",
+					"excerpt": "This post is still being written.",
+					"content": [
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "This is a draft post that won't appear in the public listing."
+								}
+							]
+						}
+					]
+				}
+			}
+		]
+	}
+}
