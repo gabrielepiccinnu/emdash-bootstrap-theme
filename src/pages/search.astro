@@ -1,75 +1,27 @@
 ---
-export const prerender = false;
+// Redirect to locale-prefixed search. Default to "en" if plugin not available.
+let defaultLocale = "en";
 
-import { getEmDashCollection } from "emdash";
-import Base from "../layouts/Base.astro";
-import PostCard from "../components/PostCard.astro";
-import { getReadingTime, extractText } from "../utils/reading-time";
-
-const query = Astro.url.searchParams.get("q")?.trim() || "";
-
-const { entries: allPosts } = await getEmDashCollection("posts");
-
-function matchesQuery(post: (typeof allPosts)[0], q: string): boolean {
-	if (!q) return false;
-	const lower = q.toLowerCase();
-	const title = (post.data.title || "").toLowerCase();
-	const excerpt = (post.data.excerpt || "").toLowerCase();
-	const content = extractText(post.data.content).toLowerCase();
-	return title.includes(lower) || excerpt.includes(lower) || content.includes(lower);
+try {
+	const apiUrl = `${Astro.url.origin}/_emdash/api/plugins/emdash-multilanguage/languages/list`;
+	const res = await fetch(apiUrl, {
+		method: "POST",
+		headers: {
+			"content-type": "application/json",
+			cookie: Astro.request.headers.get("cookie") ?? "",
+		},
+		body: JSON.stringify({}),
+	});
+	if (res.ok) {
+		const body = (await res.json()) as { data?: { languages?: Array<{ code: string; isDefault: boolean }> } };
+		const def = body.data?.languages?.find((l) => l.isDefault);
+		if (def) defaultLocale = def.code;
+	}
+} catch {
+	// Ignore — use fallback
 }
 
-const results = query ? allPosts.filter((p) => matchesQuery(p, query)) : [];
+const q = Astro.url.searchParams.get("q");
+const target = q ? `/${defaultLocale}/search?q=${encodeURIComponent(q)}` : `/${defaultLocale}/search`;
+return Astro.redirect(target, 302);
 ---
-
-<Base
-	title={query ? `Search: ${query}` : "Search"}
-	description="Search blog posts"
->
-	<div class="container py-5" style="max-width: 760px;">
-		<h1 class="fw-bold mb-4">Search</h1>
-
-		<form method="get" action="/search" class="d-flex gap-2 mb-4">
-			<input
-				type="search"
-				name="q"
-				value={query}
-				placeholder="Search posts…"
-				class="form-control"
-				autofocus
-			/>
-			<button type="submit" class="btn btn-primary px-4">Search</button>
-		</form>
-
-		{
-			query && (
-				<p class="text-secondary small mb-4">
-					{results.length === 0
-						? `No results for "${query}"`
-						: `${results.length} result${results.length === 1 ? "" : "s"} for "${query}"`}
-				</p>
-			)
-		}
-
-		{
-			results.length > 0 && (
-				<div class="row g-4">
-					{results.map((post) => (
-						<div class="col-sm-6">
-							<PostCard
-								title={post.data.title}
-								excerpt={post.data.excerpt}
-								featuredImage={post.data.featured_image}
-								href={`/posts/${post.id}`}
-								date={post.data.publishedAt ?? undefined}
-								readingTime={getReadingTime(post.data.content)}
-							/>
-						</div>
-					))}
-				</div>
-			)
-		}
-
-		{!query && <p class="text-secondary small">Enter a search term to find posts.</p>}
-	</div>
-</Base>

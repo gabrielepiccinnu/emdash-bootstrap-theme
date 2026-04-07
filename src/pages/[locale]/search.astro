@@ -1,0 +1,79 @@
+---
+export const prerender = false;
+
+import { getEmDashCollection } from "emdash";
+import Base from "../../layouts/Base.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getReadingTime, extractText } from "../../utils/reading-time";
+
+const { locale } = Astro.params;
+
+if (!locale) return Astro.redirect("/404");
+
+const query = Astro.url.searchParams.get("q")?.trim() || "";
+
+const { entries: allPosts } = await getEmDashCollection("posts", { locale });
+
+function matchesQuery(post: (typeof allPosts)[0], q: string): boolean {
+	if (!q) return false;
+	const lower = q.toLowerCase();
+	const title = (post.data.title || "").toLowerCase();
+	const excerpt = (post.data.excerpt || "").toLowerCase();
+	const content = extractText(post.data.content).toLowerCase();
+	return title.includes(lower) || excerpt.includes(lower) || content.includes(lower);
+}
+
+const results = query ? allPosts.filter((p) => matchesQuery(p, query)) : [];
+---
+
+<Base
+	title={query ? `Search: ${query}` : "Search"}
+	description="Search blog posts"
+>
+	<div class="container py-5" style="max-width: 760px;">
+		<h1 class="fw-bold mb-4">Search</h1>
+
+		<form method="get" action={`/${locale}/search`} class="d-flex gap-2 mb-4">
+			<input
+				type="search"
+				name="q"
+				value={query}
+				placeholder="Search posts…"
+				class="form-control"
+				autofocus
+			/>
+			<button type="submit" class="btn btn-primary px-4">Search</button>
+		</form>
+
+		{
+			query && (
+				<p class="text-secondary small mb-4">
+					{results.length === 0
+						? `No results for "${query}"`
+						: `${results.length} result${results.length === 1 ? "" : "s"} for "${query}"`}
+				</p>
+			)
+		}
+
+		{
+			results.length > 0 && (
+				<div class="row g-4">
+					{results.map((post) => (
+						<div class="col-sm-6">
+							<PostCard
+								title={post.data.title ?? "Untitled"}
+								excerpt={post.data.excerpt}
+								featuredImage={post.data.featured_image}
+								href={`/${locale}/posts/${post.id}`}
+								date={post.data.publishedAt ?? undefined}
+								readingTime={getReadingTime(post.data.content)}
+							/>
+						</div>
+					))}
+				</div>
+			)
+		}
+
+		{!query && <p class="text-secondary small">Enter a search term to find posts.</p>}
+	</div>
+</Base>

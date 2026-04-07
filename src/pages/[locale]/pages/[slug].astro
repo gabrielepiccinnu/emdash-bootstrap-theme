@@ -1,0 +1,45 @@
+---
+import { getEmDashEntry } from "emdash";
+import { PortableText } from "emdash/ui";
+import Base from "../../../layouts/Base.astro";
+
+const { locale, slug } = Astro.params;
+
+if (!locale || !slug) return Astro.redirect("/404");
+
+const { entry: page, cacheHint } = await getEmDashEntry("pages", slug, { locale });
+
+if (!page) return Astro.redirect("/404");
+
+Astro.cache.set(cacheHint);
+---
+
+<Base
+	title={page.data.title}
+	content={{ collection: "pages", id: page.data.id, slug }}
+>
+	<div class="container py-5">
+		<div class="row justify-content-center">
+			<div class="col-lg-8 col-xl-7">
+				<nav aria-label="breadcrumb" class="mb-4">
+					<ol class="breadcrumb small">
+						<li class="breadcrumb-item">
+							<a href={`/${locale}`} class="text-secondary text-decoration-none">Home</a>
+						</li>
+						<li class="breadcrumb-item active">{page.data.title}</li>
+					</ol>
+				</nav>
+
+				<header class="mb-4">
+					<h1 class="display-5 fw-bold" {...page.edit.title}>{page.data.title}</h1>
+				</header>
+
+				<hr class="mb-4" />
+
+				<div class="article-content">
+					<PortableText value={page.data.content} />
+				</div>
+			</div>
+		</div>
+	</div>
+</Base>

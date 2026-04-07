@@ -11,6 +11,7 @@ interface Props {
 	readingTime?: number;
 	tags?: Array<{ slug: string; label: string }>;
 	bylines?: ContentBylineCredit[];
+	locale?: string;
 }
 
 const {
@@ -23,6 +24,8 @@ const {
 	tags,
 	bylines,
 } = Astro.props;
+
+const locale: string = Astro.props.locale ?? (Astro.params.locale as string | undefined) ?? "en";
 
 const formattedDate = date
 	? date.toLocaleDateString("en-US", {
@@ -113,7 +116,7 @@ const formattedDate = date
 			<div class="card-footer bg-transparent border-0 pt-0 d-flex flex-wrap gap-1">
 				{tags.slice(0, 3).map((tag) => (
 					<a
-						href={`/tag/${tag.slug}`}
+						href={`/${locale}/tag/${tag.slug}`}
 						class="badge text-bg-secondary text-decoration-none fw-normal"
 						style="position: relative; z-index: 1;"
 					>

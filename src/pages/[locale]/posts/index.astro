@@ -1,0 +1,77 @@
+---
+import { getEmDashCollection, getEntryTerms } from "emdash";
+import Base from "../../../layouts/Base.astro";
+import PostCard from "../../../components/PostCard.astro";
+import { getReadingTime } from "../../../utils/reading-time";
+
+const { locale } = Astro.params;
+
+if (!locale) return Astro.redirect("/404");
+
+const { entries: posts, cacheHint } = await getEmDashCollection("posts", { locale });
+
+Astro.cache.set(cacheHint);
+
+const sortedPosts = posts.toSorted((a, b) => {
+	const dateA = a.data.publishedAt?.getTime() ?? 0;
+	const dateB = b.data.publishedAt?.getTime() ?? 0;
+	return dateB - dateA;
+});
+
+const postsWithMeta = await Promise.all(
+	sortedPosts.map(async (post) => {
+		const tags = await getEntryTerms("posts", post.data.id, "tag");
+		return {
+			post,
+			tags: tags.map((t) => ({ slug: t.slug, label: t.label })),
+			bylines: post.data.bylines ?? [],
+		};
+	})
+);
+---
+
+<Base title="All Posts" description="Browse all blog posts">
+	<div class="container py-5">
+		<div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+			<div>
+				<nav aria-label="breadcrumb" class="mb-1">
+					<ol class="breadcrumb small mb-0">
+						<li class="breadcrumb-item">
+							<a href={`/${locale}`} class="text-secondary text-decoration-none">Home</a>
+						</li>
+						<li class="breadcrumb-item active">Posts</li>
+					</ol>
+				</nav>
+				<h1 class="h4 fw-bold mb-0 mt-2">
+					All Posts
+					<span class="text-secondary fw-normal fs-6 ms-2">{posts.length} {posts.length === 1 ? "article" : "articles"}</span>
+				</h1>
+			</div>
+		</div>
+
+		{
+			postsWithMeta.length === 0 ? (
+				<div class="py-5 text-center text-secondary">
+					<p class="mb-0">No posts yet.</p>
+				</div>
+			) : (
+				<div class="row g-4">
+					{postsWithMeta.map(({ post, tags, bylines }) => (
+						<div class="col-sm-6 col-lg-4">
+							<PostCard
+								title={post.data.title ?? "Untitled"}
+								excerpt={post.data.excerpt}
+								featuredImage={post.data.featured_image}
+								href={`/${locale}/posts/${post.data.slug ?? post.id}`}
+								date={post.data.publishedAt ?? undefined}
+								readingTime={getReadingTime(post.data.content)}
+								tags={tags}
+								bylines={bylines}
+							/>
+						</div>
+					))}
+				</div>
+			)
+		}
+	</div>
+</Base>
