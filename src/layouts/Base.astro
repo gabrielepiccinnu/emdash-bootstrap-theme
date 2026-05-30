@@ -115,6 +115,14 @@ function getLangUrl(lang: LangInfo): string {
 	return translationUrls[lang.code] ?? `/${lang.code}/`;
 }
 
+// On content pages where we have actual translation data, only show languages
+// that have a real translated URL. On list/home pages (no content.id) or when
+// the translationIndex has no data for this entry, show all active languages.
+const isContentPage = !!content?.id;
+const displayLanguages = isContentPage && Object.keys(translationUrls).length > 0
+	? activeLanguages.filter((l) => translationUrls[l.code] !== undefined)
+	: activeLanguages;
+
 /** Prefix a CMS menu URL with the current locale (skip external links) */
 function localizeUrl(url: string): string {
 	if (!url || !url.startsWith("/")) return url;
@@ -284,8 +292,8 @@ function localizeUrl(url: string): string {
 									></path>
 								</svg>
 							</button>
-							{/* Language switcher — only shown when ≥2 languages are configured */}
-							{activeLanguages.length > 1 && (
+							{/* Language switcher — only shown when ≥2 languages are available for this page */}
+							{displayLanguages.length > 1 && (
 								<div class="btn-group dropstart">
 									<button
 										class="btn btn-outline-secondary dropdown-toggle"
@@ -299,7 +307,7 @@ function localizeUrl(url: string): string {
 											locale.toUpperCase()}
 									</button>
 									<ul class="dropdown-menu">
-										{activeLanguages.map((lang) => (
+										{displayLanguages.map((lang) => (
 											<li>
 												<a
 													class={`dropdown-item${lang.code === locale ? " active" : ""}`}
