@@ -7,6 +7,18 @@
  * Full reference: https://getbootstrap.com/docs/5.3/customize/css-variables/
  */
 
+/**
+ * Override the Tailwind `.collapse { visibility: collapse }` utility that ships
+ * inside EmDash's admin CSS bundle (admin/dist/styles.css is also injected on
+ * public pages because of the EmDash visual editing toolbar). Without this
+ * override, the Bootstrap navbar's `<div class="navbar-collapse collapse">`
+ * inherits visibility:collapse and the whole nav becomes invisible.
+ */
+.navbar-collapse,
+.navbar-collapse.collapse {
+	visibility: visible;
+}
+
 :root {
 	/* Primary color — change this to rebrand the whole theme */
 	/* --bs-primary: #0d6efd; */

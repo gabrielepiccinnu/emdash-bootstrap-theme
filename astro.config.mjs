@@ -40,8 +40,10 @@ export default defineConfig({
 	vite: {
 		server: {
 			fs: {
-				// Allow Vite to serve files from the project root and the monorepo (sibling)
-				allow: [path.resolve("."), path.resolve("../emdash")],
+				// Allow Vite to serve files from the project root and the monorepo.
+				// "../.." resolves the monorepo root whether the theme is copied
+				// into templates/ (this fork) or symlinked from outside.
+				allow: [path.resolve("."), path.resolve("../..")],
 			},
 		},
 	},
